@@ -1,0 +1,6 @@
+npm.cmd install express 
+data
+huuthiet321_db_user
+a0OgfpstEwc8QdQD
+link ket noi data
+mongodb+srv://huuthiet321_db_user:a0OgfpstEwc8QdQD@cluster0.bmzzb8h.mongodb.net/?appName=Cluster0
