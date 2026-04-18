@@ -1,36 +1,43 @@
 import express from "express";
-import taskRoute from "./routes/tasksRouters.js";
-import { connectDB } from "./config/db.js";
 import dotenv from "dotenv";
 import cors from "cors";
-import path from "path";
+import cookieParser from "cookie-parser";
+import { connectDB } from "./config/db.js";
+import authRoutes from "./routes/authRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 5001;
-const __dirname = path.resolve();
-
 const app = express();
 
-// middlewares
+connectDB();
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
+
+app.use("/api/dashboard", dashboardRoutes);
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
-if (process.env.NODE_ENV !== "production") {
-  app.use(cors({ origin: "http://localhost:5173" }));
-}
+app.get("/", (req, res) => {
+  res.send("API đang chạy...");
+});
 
-app.use("/api/tasks", taskRoute);
+app.use("/api/auth", authRoutes);
 
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+app.use((req, res) => {
+  res.status(404).json({
+    message: "Route không tồn tại",
   });
-}
+});
 
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`server bắt đầu trên cổng ${PORT}`);
-  });
+const PORT = process.env.PORT || 5001;
+
+app.listen(PORT, () => {
+  console.log(`Server đang chạy tại http://localhost:${PORT}`);
 });
