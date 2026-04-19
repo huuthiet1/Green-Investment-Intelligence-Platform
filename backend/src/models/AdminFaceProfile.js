@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const adminFaceProfileSchema = new mongoose.Schema(
   {
@@ -15,7 +15,7 @@ const adminFaceProfileSchema = new mongoose.Schema(
     },
     face_image_url: {
       type: String,
-      default: null,
+      default: "",
     },
     is_active: {
       type: Boolean,
@@ -26,12 +26,8 @@ const adminFaceProfileSchema = new mongoose.Schema(
       default: Date.now,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-adminFaceProfileSchema.index({ user_id: 1 }, { unique: true });
-adminFaceProfileSchema.index({ is_active: 1 });
-
-module.exports = mongoose.model("AdminFaceProfile", adminFaceProfileSchema);
+const AdminFaceProfile = mongoose.model("AdminFaceProfile", adminFaceProfileSchema);
+export default AdminFaceProfile;

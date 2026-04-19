@@ -29,6 +29,18 @@ function getGoogleUrl() {
   return `${baseURL}/auth/google`;
 }
 
+function redirectByRole(navigate, role) {
+  if (role === "admin") {
+    navigate("/admin", { replace: true });
+  } else if (role === "investor") {
+    navigate("/investor", { replace: true });
+  } else if (role === "business") {
+    navigate("/business", { replace: true });
+  } else {
+    navigate("/", { replace: true });
+  }
+}
+
 function AuthShell({ title, subtitle, children, footer }) {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -229,8 +241,9 @@ export function LoginPage() {
           token,
           user: res.data.user,
         });
+
         window.history.replaceState({}, document.title, "/login");
-        navigate("/dashboard");
+        redirectByRole(navigate, res.data.user?.role);
       })
       .catch(() => {
         localStorage.removeItem("token");
@@ -246,7 +259,11 @@ export function LoginPage() {
     if (googleToken) return;
 
     const token = localStorage.getItem("token");
-    if (token) navigate("/dashboard");
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (token && user) {
+      redirectByRole(navigate, user.role);
+    }
   }, [navigate]);
 
   useEffect(() => {
@@ -308,7 +325,7 @@ export function LoginPage() {
       });
 
       login(res.data);
-      navigate("/dashboard");
+      redirectByRole(navigate, res.data.user?.role);
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Đăng nhập thất bại.");
     } finally {
@@ -363,7 +380,7 @@ export function LoginPage() {
       });
 
       login(res.data);
-      navigate("/dashboard");
+      redirectByRole(navigate, res.data.user?.role);
     } catch (error) {
       setErrorMessage(
         error.response?.data?.message || "Xác thực OTP thất bại."
@@ -569,7 +586,11 @@ export function RegisterPage() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) navigate("/dashboard");
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (token && user) {
+      redirectByRole(navigate, user.role);
+    }
   }, [navigate]);
 
   const clearMessages = () => {
@@ -626,7 +647,7 @@ export function RegisterPage() {
 
       login(res.data);
       setSuccessMessage("Tạo tài khoản thành công.");
-      navigate("/dashboard");
+      redirectByRole(navigate, res.data.user?.role);
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "Đăng ký thất bại.");
     } finally {

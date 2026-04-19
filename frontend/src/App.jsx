@@ -3,9 +3,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import { LoginPage, RegisterPage } from "./pages/AuthPages";
 import HomePage from "./pages/HomePage";
-import DashboardPage from "./pages/DashboardPage";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import InvestorDashboard from "./pages/investor/InvestorDashboard";
+import BusinessDashboard from "./pages/business/BusinessDashboard";
 
 export default function App() {
   return (
@@ -17,10 +19,28 @@ export default function App() {
         <Route path="/home" element={<HomePage />} />
 
         <Route
-          path="/dashboard"
+          path="/admin"
           element={
-            <ProtectedRoute>
-              <DashboardPage />
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/investor"
+          element={
+            <ProtectedRoute allowedRoles={["investor"]}>
+              <InvestorDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/business"
+          element={
+            <ProtectedRoute allowedRoles={["business"]}>
+              <BusinessDashboard />
             </ProtectedRoute>
           }
         />

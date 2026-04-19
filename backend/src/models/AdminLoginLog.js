@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const adminLoginLogSchema = new mongoose.Schema(
   {
@@ -18,25 +18,23 @@ const adminLoginLogSchema = new mongoose.Schema(
     },
     ip_address: {
       type: String,
-      default: null,
+      default: "",
     },
     user_agent: {
       type: String,
-      default: null,
+      default: "",
     },
     device_info: {
       type: String,
-      default: null,
+      default: "",
     },
     face_confidence: {
       type: Number,
       default: null,
-      min: 0,
-      max: 100,
     },
     failure_reason: {
       type: String,
-      default: null,
+      default: "",
     },
   },
   {
@@ -44,8 +42,5 @@ const adminLoginLogSchema = new mongoose.Schema(
   }
 );
 
-adminLoginLogSchema.index({ admin_user_id: 1 });
-adminLoginLogSchema.index({ login_time: 1 });
-adminLoginLogSchema.index({ login_status: 1 });
-
-module.exports = mongoose.model("AdminLoginLog", adminLoginLogSchema);
+const AdminLoginLog = mongoose.model("AdminLoginLog", adminLoginLogSchema);
+export default AdminLoginLog;
