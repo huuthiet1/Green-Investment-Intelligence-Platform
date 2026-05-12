@@ -25,13 +25,13 @@ const CONTENT = {
     badge: "Kết nối doanh nghiệp xanh với nhà đầu tư minh bạch và an toàn",
     title: (
       <>
-        Gọi vốn cho <span className="text-green-400">dự án xanh</span>
+        Gọi vốn cho <span className="text-emerald-500">dự án xanh</span>
         <br />
         bằng dữ liệu, ESG và bảo mật nâng cao.
       </>
     ),
     description:
-      "Nền tảng hỗ trợ doanh nghiệp đăng tải dự án, nhà đầu tư tìm kiếm cơ hội phù hợp và quản trị viên giám sát hệ thống với xác thực nhiều lớp, cảnh báo Zalo và audit log.",
+      "Nền tảng hỗ trợ doanh nghiệp đăng tải dự án, nhà đầu tư tìm kiếm cơ hội phù hợp.",
   },
   stats: [
     { value: "3", label: "Nhóm người dùng chính" },
@@ -179,7 +179,7 @@ function Card({ className = "", children }) {
   return (
     <div
       className={cn(
-        "rounded-3xl border border-white/10 bg-white/5 backdrop-blur",
+        "rounded-3xl border border-emerald-100 bg-white shadow-lg",
         className
       )}
     >
@@ -197,13 +197,15 @@ function Button({
   ...props
 }) {
   const base =
-    "inline-flex items-center justify-center rounded-2xl px-6 py-3 text-sm font-semibold transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-400/40 disabled:cursor-not-allowed disabled:opacity-60";
+    "inline-flex items-center justify-center rounded-2xl px-6 py-3 text-sm font-semibold transition duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-400/40 disabled:cursor-not-allowed disabled:opacity-60";
 
   const variants = {
-    primary: "bg-green-500 text-slate-950 hover:bg-green-400",
-    secondary: "bg-white text-slate-950 hover:bg-slate-100",
-    ghost: "text-white hover:bg-white/10",
-    outline: "border border-white/15 bg-white/5 text-white hover:bg-white/10",
+    primary:
+      "bg-emerald-500 text-white hover:bg-emerald-600 shadow-lg shadow-emerald-500/20",
+    secondary: "bg-white text-slate-900 hover:bg-slate-100",
+    ghost: "text-slate-700 hover:bg-emerald-50",
+    outline:
+      "border border-emerald-200 bg-white text-emerald-700 hover:bg-emerald-50",
   };
 
   const mergedClassName = cn(base, variants[variant], className);
@@ -224,10 +226,10 @@ function Button({
 
 const StatCard = memo(function StatCard({ value, label }) {
   return (
-    <Card className="shadow-xl shadow-black/10">
+    <Card className="shadow-xl shadow-emerald-900/10">
       <div className="p-5">
-        <div className="text-3xl font-bold text-green-400">{value}</div>
-        <p className="mt-2 text-sm text-white/70">{label}</p>
+        <div className="text-3xl font-bold text-emerald-500">{value}</div>
+        <p className="mt-2 text-sm text-slate-600">{label}</p>
       </div>
     </Card>
   );
@@ -235,13 +237,13 @@ const StatCard = memo(function StatCard({ value, label }) {
 
 const FeatureCard = memo(function FeatureCard({ icon: Icon, title, desc }) {
   return (
-    <Card className="bg-slate-950/60 transition duration-300 hover:-translate-y-1 hover:border-green-400/30">
+    <Card className="transition duration-300 hover:-translate-y-1 hover:border-emerald-300 hover:shadow-xl">
       <div className="p-6">
-        <div className="mb-4 inline-flex rounded-2xl bg-green-500/10 p-3 text-green-400">
+        <div className="mb-4 inline-flex rounded-2xl bg-emerald-100 p-3 text-emerald-500">
           <Icon className="h-6 w-6" />
         </div>
-        <h4 className="text-xl font-semibold">{title}</h4>
-        <p className="mt-3 leading-7 text-white/65">{desc}</p>
+        <h4 className="text-xl font-semibold text-slate-900">{title}</h4>
+        <p className="mt-3 leading-7 text-slate-600">{desc}</p>
       </div>
     </Card>
   );
@@ -251,15 +253,15 @@ const RoleCard = memo(function RoleCard({ icon: Icon, title, items }) {
   return (
     <Card>
       <div className="p-6">
-        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-green-500/10 text-green-400">
+        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-500">
           <Icon className="h-6 w-6" />
         </div>
-        <h4 className="text-2xl font-semibold">{title}</h4>
+        <h4 className="text-2xl font-semibold text-slate-900">{title}</h4>
         <div className="mt-5 space-y-3">
           {items.map((item) => (
             <div
               key={item}
-              className="rounded-2xl border border-white/10 bg-slate-900/70 px-4 py-3 text-white/75"
+              className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-slate-700"
             >
               {item}
             </div>
@@ -274,9 +276,9 @@ const StepCard = memo(function StepCard({ number, title, desc }) {
   return (
     <Card>
       <div className="p-6">
-        <div className="text-5xl font-bold text-green-400/80">{number}</div>
-        <h4 className="mt-4 text-xl font-semibold">{title}</h4>
-        <p className="mt-3 leading-7 text-white/70">{desc}</p>
+        <div className="text-5xl font-bold text-emerald-500/80">{number}</div>
+        <h4 className="mt-4 text-xl font-semibold text-slate-900">{title}</h4>
+        <p className="mt-3 leading-7 text-slate-600">{desc}</p>
       </div>
     </Card>
   );
@@ -286,13 +288,15 @@ function SectionHeading({ eyebrow, title, description }) {
   return (
     <div className="mb-12">
       {eyebrow && (
-        <p className="text-sm font-medium uppercase tracking-[0.25em] text-green-400">
+        <p className="text-sm font-medium uppercase tracking-[0.25em] text-emerald-500">
           {eyebrow}
         </p>
       )}
-      <h3 className="mt-4 text-3xl font-bold md:text-4xl">{title}</h3>
+      <h3 className="mt-4 text-3xl font-bold text-slate-900 md:text-4xl">
+        {title}
+      </h3>
       {description && (
-        <p className="mt-4 max-w-2xl text-white/65">{description}</p>
+        <p className="mt-4 max-w-2xl text-slate-600">{description}</p>
       )}
     </div>
   );
@@ -303,12 +307,14 @@ function Header() {
     <div className="relative mx-auto max-w-7xl px-6 py-6 lg:px-8">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-green-500/20 ring-1 ring-green-400/30">
-            <Leaf className="h-6 w-6 text-green-400" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 ring-1 ring-emerald-200">
+            <Leaf className="h-6 w-6 text-emerald-500" />
           </div>
           <div>
-            <p className="text-sm text-white/60">{CONTENT.brand.en}</p>
-            <h1 className="text-lg font-semibold">{CONTENT.brand.vi}</h1>
+            <p className="text-sm text-slate-500">{CONTENT.brand.en}</p>
+            <h1 className="text-lg font-semibold text-slate-900">
+              {CONTENT.brand.vi}
+            </h1>
           </div>
         </div>
 
@@ -327,8 +333,8 @@ function Header() {
 
 function HeroSection() {
   return (
-    <section className="relative overflow-hidden border-b border-white/10">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,197,94,0.22),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.18),transparent_30%)]" />
+    <section className="relative overflow-hidden border-b border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-cyan-50">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.18),transparent_35%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.12),transparent_35%)]" />
 
       <Header />
 
@@ -340,16 +346,16 @@ function HeroSection() {
           transition={{ duration: 0.6 }}
           className="space-y-8"
         >
-          <div className="inline-flex items-center gap-2 rounded-full border border-green-400/20 bg-green-400/10 px-4 py-2 text-sm text-green-300">
+          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-600">
             <BadgeCheck className="h-4 w-4" />
             {CONTENT.hero.badge}
           </div>
 
           <div className="space-y-5">
-            <h2 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight md:text-6xl">
+            <h2 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight text-slate-900 md:text-6xl">
               {CONTENT.hero.title}
             </h2>
-            <p className="max-w-2xl text-lg leading-8 text-white/70">
+            <p className="max-w-2xl text-lg leading-8 text-slate-600">
               {CONTENT.hero.description}
             </p>
           </div>
@@ -377,14 +383,16 @@ function HeroSection() {
           transition={{ duration: 0.7, delay: 0.1 }}
           className="grid gap-4"
         >
-          <Card className="rounded-[28px] shadow-2xl shadow-green-900/20">
+          <Card className="rounded-[28px] shadow-2xl shadow-emerald-900/15">
             <div className="p-6">
               <div className="mb-6 flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-white/50">Dashboard overview</p>
-                  <h3 className="text-xl font-semibold">Điểm nhấn hệ thống</h3>
+                  <p className="text-sm text-slate-500">Dashboard overview</p>
+                  <h3 className="text-xl font-semibold text-slate-900">
+                    Điểm nhấn hệ thống
+                  </h3>
                 </div>
-                <div className="rounded-xl bg-green-500/15 px-3 py-2 text-sm text-green-300">
+                <div className="rounded-xl bg-emerald-100 px-3 py-2 text-sm text-emerald-600">
                   ESG Ready
                 </div>
               </div>
@@ -395,14 +403,16 @@ function HeroSection() {
                   return (
                     <div
                       key={item.title}
-                      className="flex items-start gap-4 rounded-2xl border border-white/10 bg-slate-900/70 p-4"
+                      className="flex items-start gap-4 rounded-2xl border border-emerald-100 bg-emerald-50 p-4"
                     >
-                      <div className="rounded-xl bg-green-500/10 p-3 text-green-400">
+                      <div className="rounded-xl bg-emerald-100 p-3 text-emerald-500">
                         <Icon className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="font-medium">{item.title}</p>
-                        <p className="text-sm text-white/60">{item.value}</p>
+                        <p className="font-medium text-slate-900">
+                          {item.title}
+                        </p>
+                        <p className="text-sm text-slate-600">{item.value}</p>
                       </div>
                     </div>
                   );
@@ -428,8 +438,10 @@ function AnalysisSection() {
         {CONTENT.highlights.map((item) => (
           <Card key={item.title}>
             <div className="p-6">
-              <h4 className="text-xl font-semibold">{item.title}</h4>
-              <p className="mt-3 leading-7 text-white/70">{item.desc}</p>
+              <h4 className="text-xl font-semibold text-slate-900">
+                {item.title}
+              </h4>
+              <p className="mt-3 leading-7 text-slate-600">{item.desc}</p>
             </div>
           </Card>
         ))}
@@ -440,7 +452,7 @@ function AnalysisSection() {
 
 function FeaturesSection() {
   return (
-    <section className="border-y border-white/10 bg-white/5">
+    <section className="border-y border-emerald-100 bg-emerald-50/40">
       <Section className="py-20">
         <SectionHeading
           eyebrow="Tính năng nổi bật"
@@ -461,6 +473,12 @@ function FeaturesSection() {
 function RolesSection() {
   return (
     <Section className="py-20">
+      <SectionHeading
+        eyebrow="Vai trò người dùng"
+        title="Thiết kế cho 3 nhóm người dùng chính"
+        description="Mỗi nhóm người dùng có luồng thao tác riêng, giúp hệ thống dễ mở rộng và dễ quản trị."
+      />
+
       <div className="grid gap-6 lg:grid-cols-3">
         {CONTENT.roles.map((role) => (
           <RoleCard key={role.title} {...role} />
@@ -472,7 +490,7 @@ function RolesSection() {
 
 function StepsSection() {
   return (
-    <section className="border-y border-white/10 bg-gradient-to-b from-green-500/5 to-transparent">
+    <section className="border-y border-emerald-100 bg-gradient-to-b from-emerald-50 to-white">
       <Section className="py-20">
         <SectionHeading
           eyebrow="Quy trình hoạt động"
@@ -492,18 +510,19 @@ function StepsSection() {
 function CTASection() {
   return (
     <Section className="py-20">
-      <Card className="overflow-hidden rounded-[32px] border-green-400/20 bg-gradient-to-r from-green-500/15 via-emerald-500/10 to-cyan-500/10">
+      <Card className="overflow-hidden rounded-[32px] border-emerald-200 bg-gradient-to-r from-emerald-500/15 via-emerald-100 to-cyan-100">
         <div className="flex flex-col gap-8 p-8 md:flex-row md:items-center md:justify-between md:p-10">
           <div className="max-w-2xl">
-            <p className="text-sm font-medium uppercase tracking-[0.25em] text-green-300">
+            <p className="text-sm font-medium uppercase tracking-[0.25em] text-emerald-600">
               Sẵn sàng triển khai
             </p>
-            <h3 className="mt-4 text-3xl font-bold md:text-4xl">
+            <h3 className="mt-4 text-3xl font-bold text-slate-900 md:text-4xl">
               Biến đồ án thành một landing page thuyết phục và hiện đại
             </h3>
-            <p className="mt-4 leading-7 text-white/75">
+            <p className="mt-4 leading-7 text-slate-600">
               Giao diện này phù hợp để dùng làm trang chủ cho đồ án tốt nghiệp,
-              demo portfolio hoặc phần giới thiệu sản phẩm trước khi vào dashboard.
+              demo portfolio hoặc phần giới thiệu sản phẩm trước khi vào
+              dashboard.
             </p>
           </div>
 
@@ -523,7 +542,7 @@ function CTASection() {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-white text-slate-800">
       <HeroSection />
       <AnalysisSection />
       <FeaturesSection />

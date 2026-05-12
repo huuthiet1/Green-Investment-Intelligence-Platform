@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const esgScoreSchema = new mongoose.Schema(
   {
@@ -10,54 +10,31 @@ const esgScoreSchema = new mongoose.Schema(
     },
     environment_score: {
       type: Number,
-      required: true,
-      min: 0,
-      max: 100,
+      default: 0,
     },
     social_score: {
       type: Number,
-      required: true,
-      min: 0,
-      max: 100,
+      default: 0,
     },
     governance_score: {
       type: Number,
-      required: true,
-      min: 0,
-      max: 100,
+      default: 0,
     },
     total_score: {
       type: Number,
-      required: true,
-      min: 0,
-      max: 100,
+      default: 0,
     },
     esg_level: {
       type: String,
       enum: ["excellent", "good", "average", "poor"],
-      default: null,
+      default: "poor",
     },
     evaluation_note: {
       type: String,
-      default: null,
-    },
-    scored_by: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
-    },
-    scored_at: {
-      type: Date,
-      default: Date.now,
+      default: "",
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-esgScoreSchema.index({ total_score: 1 });
-esgScoreSchema.index({ esg_level: 1 });
-esgScoreSchema.index({ scored_by: 1 });
-
-module.exports = mongoose.model("ESGScore", esgScoreSchema);
+export default mongoose.model("ESGScore", esgScoreSchema);

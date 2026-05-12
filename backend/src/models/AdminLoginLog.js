@@ -7,10 +7,6 @@ const adminLoginLogSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    login_time: {
-      type: Date,
-      default: Date.now,
-    },
     login_status: {
       type: String,
       enum: ["success", "failed"],
@@ -30,17 +26,20 @@ const adminLoginLogSchema = new mongoose.Schema(
     },
     face_confidence: {
       type: Number,
-      default: null,
+      default: 0,
     },
     failure_reason: {
       type: String,
       default: "",
     },
+    login_time: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  {
-    timestamps: { createdAt: "created_at", updatedAt: false },
-  }
+  { timestamps: true }
 );
 
 const AdminLoginLog = mongoose.model("AdminLoginLog", adminLoginLogSchema);
+
 export default AdminLoginLog;

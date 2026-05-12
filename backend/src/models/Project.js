@@ -1,3 +1,4 @@
+import { s } from "framer-motion/client";
 import mongoose from "mongoose";
 
 const projectSchema = new mongoose.Schema(
@@ -5,125 +6,122 @@ const projectSchema = new mongoose.Schema(
     owner_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false,
     },
 
-    category_name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    location_name: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-    region_name: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
-    status: {
-      type: String,
-      enum: ["draft", "pending", "approved", "rejected", "closed", "funded"],
-      default: "pending",
-    },
-
-    project_code: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
+    project_code: String,
     title: {
       type: String,
       required: true,
-      trim: true,
     },
-    slug: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
-    short_description: {
+    slug: String,
+    short_description: String,
+    description: String,
+
+    category_id: String,
+    category_name: {
       type: String,
       default: "",
-      trim: true,
-    },
-    description: {
-      type: String,
-      required: true,
     },
 
+    location_id: String,
+    status_id: String,
+
+    status: {
+      type: String,
+      default: "pending",
+    },
+
+    reviewer_status: {
+      type: String,
+      enum: ["pending", "approved", "rejected", "reviewing","suspended"],
+      default: "pending",
+    },
+    review_note: {
+      type: String,
+      default: "",
+    },
+    review_by: {
+      type: String,
+      default: "",
+    },
+review_at:{
+      type: Date,
+      default: null,
+
+},
+
+ai_risk_score: {
+  type: Number,
+  default: 0,
+},
+
+ai_risk_level: {
+  type: String,
+  enum: ["low", "medium", "high"],
+  default: "low",
+},
+
+ai_risk_flags: {
+  type: [String],
+  default: [],
+},
     capital_needed: {
       type: Number,
-      required: true,
-      min: 0,
+      default: 0,
     },
     capital_currency: {
       type: String,
       default: "VND",
-      trim: true,
     },
+
     roi_expected: {
       type: Number,
-      default: null,
-      min: 0,
+      default: 0,
     },
+
     risk_level: {
       type: String,
       enum: ["low", "medium", "high"],
       default: "medium",
     },
+
     project_duration_months: {
       type: Number,
-      default: null,
-      min: 0,
-    },
-    start_date: {
-      type: Date,
-      default: null,
-    },
-    end_date: {
-      type: Date,
-      default: null,
+      default: 0,
     },
 
     carbon_reduction_est: {
       type: Number,
-      default: null,
-      min: 0,
+      default: 0,
     },
+
     jobs_created_est: {
       type: Number,
-      default: null,
-      min: 0,
+      default: 0,
     },
+
     thumbnail_url: {
       type: String,
       default: "",
     },
-    is_featured: {
-      type: Boolean,
-      default: false,
+
+    views: {
+      type: Number,
+      default: 0,
     },
-    published_at: {
-      type: Date,
-      default: null,
+
+    investors: {
+      type: Number,
+      default: 0,
+    },
+
+    esg_score: {
+      type: Number,
+      default: 0,
     },
   },
-  { timestamps: true }
+  { timestamps: true, strict: false }
 );
 
-projectSchema.index({ owner_id: 1 });
-projectSchema.index({ status: 1 });
-projectSchema.index({ category_name: 1 });
-projectSchema.index({ location_name: 1 });
-projectSchema.index({ risk_level: 1 });
-projectSchema.index({ project_code: 1 }, { unique: true });
-projectSchema.index({ slug: 1 }, { unique: true });
-
-const Project = mongoose.model("Project", projectSchema);
-export default Project;
+export default mongoose.model("Project", projectSchema);

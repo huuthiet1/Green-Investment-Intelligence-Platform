@@ -7,36 +7,40 @@ const projectDocumentSchema = new mongoose.Schema(
       ref: "Project",
       required: true,
     },
-    document_name: {
+
+    title: {
       type: String,
       required: true,
-      trim: true,
     },
+
     document_type: {
       type: String,
-      enum: ["pdf", "doc", "docx", "image", "xls", "xlsx", "other"],
-      required: true,
+      enum: [
+        "legal",
+        "financial",
+        "esg",
+        "pitchdeck",
+        "other",
+      ],
+      default: "other",
     },
+
     file_url: {
       type: String,
       required: true,
     },
-    file_size: {
-      type: Number,
-      default: null,
-      min: 0,
-    },
+
     uploaded_by: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
+      type: String,
+      default: "business-demo",
     },
   },
-  { timestamps: { createdAt: "created_at", updatedAt: false } }
+  {
+    timestamps: true,
+  }
 );
 
-projectDocumentSchema.index({ project_id: 1 });
-projectDocumentSchema.index({ uploaded_by: 1 });
-
-const ProjectDocument = mongoose.model("ProjectDocument", projectDocumentSchema);
-export default ProjectDocument;
+export default mongoose.model(
+  "ProjectDocument",
+  projectDocumentSchema
+);

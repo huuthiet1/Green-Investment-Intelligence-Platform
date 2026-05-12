@@ -1,77 +1,40 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const reportSchema = new mongoose.Schema(
   {
-    reporter_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    title: {
+      type: String,
       required: true,
     },
-    reported_user_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
+    target_name: {
+      type: String,
+      default: "",
     },
     project_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Project",
-      default: null,
-    },
-    comment_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      default: null,
-    },
-    message_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      default: null,
+      required: false,
     },
     report_type: {
       type: String,
-      enum: ["project", "comment", "message", "user", "other"],
-      required: true,
+      enum: ["project", "document", "funding", "esg", "user", "other"],
+      default: "other",
     },
     reason: {
       type: String,
-      required: true,
-      trim: true,
+      default: "",
     },
     description: {
       type: String,
-      default: null,
-    },
-    evidence_url: {
-      type: String,
-      default: null,
+      default: "",
     },
     status: {
       type: String,
       enum: ["pending", "reviewing", "resolved", "rejected"],
       default: "pending",
     },
-    handled_by: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
-    },
-    handled_note: {
-      type: String,
-      default: null,
-    },
-    handled_at: {
-      type: Date,
-      default: null,
-    },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-reportSchema.index({ reporter_id: 1 });
-reportSchema.index({ reported_user_id: 1 });
-reportSchema.index({ project_id: 1 });
-reportSchema.index({ status: 1 });
-reportSchema.index({ report_type: 1 });
-reportSchema.index({ handled_by: 1 });
-
-module.exports = mongoose.model("Report", reportSchema);
+export default mongoose.model("Report", reportSchema);

@@ -8,10 +8,13 @@ const adminFaceProfileSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    face_embedding: {
+    face_descriptor: {
       type: [Number],
       required: true,
-      default: [],
+      validate: {
+        validator: (arr) => Array.isArray(arr) && arr.length === 128,
+        message: "Descriptor phải có đúng 128 phần tử",
+      },
     },
     face_image_url: {
       type: String,
@@ -29,5 +32,9 @@ const adminFaceProfileSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const AdminFaceProfile = mongoose.model("AdminFaceProfile", adminFaceProfileSchema);
+const AdminFaceProfile = mongoose.model(
+  "AdminFaceProfile",
+  adminFaceProfileSchema
+);
+
 export default AdminFaceProfile;

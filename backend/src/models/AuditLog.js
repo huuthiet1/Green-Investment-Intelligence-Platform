@@ -1,42 +1,74 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const auditLogSchema = new mongoose.Schema(
   {
-    user_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
+    actor_id: {
+      type: String,
+      default: "admin-demo",
     },
+
+    actor_role: {
+      type: String,
+      default: "admin",
+    },
+
     action: {
       type: String,
       required: true,
-      trim: true,
     },
-    table_name: {
+
+    module: {
       type: String,
-      default: null,
-      trim: true,
+      enum: [
+        "auth",
+        "project",
+        "user",
+        "report",
+        "kyc",
+        "fraud",
+        "system",
+        "notification",
+        "admin",
+      ],
+      default: "admin",
     },
-    record_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      default: null,
+
+    target_id: {
+      type: String,
+      default: "",
     },
+
+    target_name: {
+      type: String,
+      default: "",
+    },
+
     old_data: {
-      type: mongoose.Schema.Types.Mixed,
-      default: null,
+      type: Object,
+      default: {},
     },
+
     new_data: {
-      type: mongoose.Schema.Types.Mixed,
-      default: null,
+      type: Object,
+      default: {},
+    },
+
+    ip_address: {
+      type: String,
+      default: "",
+    },
+
+    user_agent: {
+      type: String,
+      default: "",
+    },
+
+    note: {
+      type: String,
+      default: "",
     },
   },
-  {
-    timestamps: { createdAt: "created_at", updatedAt: false },
-  }
+  { timestamps: true }
 );
 
-auditLogSchema.index({ user_id: 1 });
-auditLogSchema.index({ table_name: 1, record_id: 1 });
-auditLogSchema.index({ created_at: 1 });
-
-module.exports = mongoose.model("AuditLog", auditLogSchema);
+export default mongoose.model("AuditLog", auditLogSchema);

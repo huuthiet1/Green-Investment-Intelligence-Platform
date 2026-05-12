@@ -14,7 +14,7 @@ const emailOTPSchema = new mongoose.Schema(
     },
     purpose: {
       type: String,
-      enum: ["login", "register", "verify_email"],
+      enum: ["login", "register", "reset_password", "verify_email"],
       default: "login",
     },
     expires_at: {
@@ -25,14 +25,8 @@ const emailOTPSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    attempt_count: {
-      type: Number,
-      default: 0,
-    },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 const EmailOTP = mongoose.model("EmailOTP", emailOTPSchema);
