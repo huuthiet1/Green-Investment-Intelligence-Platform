@@ -1,22 +1,13 @@
 {
-  "name": "green-investment-platform",
+  "name": "Green-Investment-Intelligence-Platform",
   "version": "1.0.0",
-  "private": true,
-  "description": "Green Investment Intelligence Platform",
-
+  "main": "index.js",
   "scripts": {
     "build": "npm install --prefix backend && npm install --prefix frontend && npm run build --prefix frontend",
     "start": "npm run start --prefix backend"
   },
-
-  "engines": {
-    "node": "20.x"
-  },
-
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/huuthiet1/Green-Investment-Intelligence-Platform.git"
-  },
-
-  "license": "ISC"
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
