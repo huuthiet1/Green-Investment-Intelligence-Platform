@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import http from "http";
 import { Server } from "socket.io";
 import path from "path";
+import fs from "fs";
+
 import { connectDB } from "./config/db.js";
 import { protect, allowRoles } from "./middleware/auth.js";
 
@@ -42,24 +44,26 @@ import investorAIRoutes from "./routes/investorAIRoutes.js";
 dotenv.config();
 
 const app = express();
-const __dirname = path.resolve();
-connectDB();
-
 const server = http.createServer(app);
 
-const io = new Server(server, {
-  cors: {
-    origin:
+const PORT = process.env.PORT || 5001;
+const __dirname = path.resolve();
+
+const allowedOrigin =
   process.env.NODE_ENV === "production"
     ? process.env.CLIENT_URL
-    : "http://localhost:5173",
+    : "http://localhost:5173";
+
+// ================= SOCKET.IO =================
+const io = new Server(server, {
+  cors: {
+    origin: allowedOrigin,
     credentials: true,
   },
 });
 
 app.set("io", io);
 
-// ================= SOCKET.IO =================
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);
 
@@ -84,40 +88,29 @@ io.on("connection", (socket) => {
 // ================= GLOBAL MIDDLEWARE =================
 app.use(
   cors({
-origin:
-  process.env.NODE_ENV === "production"
-    ? process.env.CLIENT_URL
-    : "http://localhost:5173",    credentials: true,
+    origin: allowedOrigin,
+    credentials: true,
   })
 );
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use("/uploads", express.static("uploads"));
 
-
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ================= PUBLIC ROUTES =================
-
-
 app.get("/api/health", (req, res) => {
   res.json({
+    success: true,
     message: "Backend is running",
   });
 });
 
-// Auth public
 app.use("/api/auth", authRoutes);
-
-// AI bot public hoặc private đều được
 app.use("/api/ai-bot", aiBotRoutes);
 
-// ======================================================
-// BUSINESS / INVESTOR SHARED PRIVATE ROUTES
-// Yêu cầu đăng nhập, dữ liệu sẽ lấy theo req.user trong từng route
-// ======================================================
-
+// ================= PRIVATE ROUTES =================
 app.use("/api/dashboard", protect, dashboardRoutes);
 app.use("/api/business", protect, businessRoutes);
 app.use("/api/projects", protect, projectRoutes);
@@ -132,26 +125,25 @@ app.use("/api/business-bot", protect, businessBotRoutes);
 app.use("/api/matching", protect, matchingRoutes);
 app.use("/api/ai-tools", protect, aiToolsRoutes);
 
-// Investor
+// ================= INVESTOR ROUTES =================
 app.use("/api/investors", protect, investorRoutes);
 app.use("/api/investments", protect, investmentRoutes);
 app.use("/api/investor-ai", protect, investorAIRoutes);
 
-// ======================================================
-// ADMIN PRIVATE ROUTES
-// Chỉ admin mới được vào
-// ======================================================
-
+// ================= ADMIN ROUTES =================
 app.use("/api/admin", protect, allowRoles("admin"), adminRoutes);
+
 app.use(
   "/api/admin/notifications",
   protect,
   allowRoles("admin"),
   notificationRoutesAdmin
 );
+
 app.use("/api/system", protect, allowRoles("admin"), systemRoutes);
 app.use("/api/fraud", protect, allowRoles("admin"), fraudRoutes);
 app.use("/api/audit-logs", protect, allowRoles("admin"), auditRoutes);
+
 app.use(
   "/api/admin-ai",
   protect,
@@ -161,44 +153,39 @@ app.use(
 
 // KYC cho business/investor gửi, admin cũng xem được trong route
 app.use("/api/kyc", protect, kycRoutes);
-// ================= FRONTEND PRODUCTION =================
-if (process.env.NODE_ENV === "production") {
-  app.use(
-    express.static(
-      path.join(__dirname, "../frontend/dist")
-    )
-  );
-
-  app.get("*", (req, res) => {
-    res.sendFile(
-      path.join(
-        __dirname,
-        "../frontend/dist/index.html"
-      )
-    );
-  });
-}
-   
 
 // ================= API 404 =================
+// Phải đặt trước React catch-all
 app.use("/api", (req, res) => {
   res.status(404).json({
+    success: false,
     message: "Route API không tồn tại",
     path: req.originalUrl,
   });
 });
 
+// ================= FRONTEND PRODUCTION =================
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../../frontend/dist")));
+  const frontendPath = path.join(__dirname, "../frontend/dist");
+
+  console.log("Frontend path:", frontendPath);
+  console.log("Frontend exists:", fs.existsSync(frontendPath));
+
+  app.use(express.static(frontendPath));
 
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
+    res.sendFile(path.join(frontendPath, "index.html"));
   });
 }
 
 // ================= START SERVER =================
-const PORT = process.env.PORT || 5001;
-
-server.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+connectDB()
+  .then(() => {
+    server.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error("Database connection failed:", error);
+    process.exit(1);
+  });
