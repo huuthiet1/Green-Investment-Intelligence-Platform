@@ -9,18 +9,14 @@
     "start": "npm run start --prefix backend"
   },
 
+  "engines": {
+    "node": "20.x"
+  },
+
   "repository": {
     "type": "git",
     "url": "https://github.com/huuthiet1/Green-Investment-Intelligence-Platform.git"
   },
-
-  "engines": {
-    "node": ">=18"
-  },
-  "devDependencies": {
-  "@vitejs/plugin-react": "latest",
-  "vite": "^8.0.8"
-},
 
   "license": "ISC"
 }
