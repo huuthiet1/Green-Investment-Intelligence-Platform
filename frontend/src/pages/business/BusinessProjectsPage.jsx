@@ -156,27 +156,36 @@ export default function BusinessProjectsPage() {
                   </div>
 
                   <div className="mt-6 grid grid-cols-3 gap-3 text-center">
-                    <div className="rounded-2xl bg-slate-900/70 p-3">
-                      <div className="text-xl font-bold">
-                        {project.views || 0}
-                      </div>
-                      <div className="text-xs text-white/50">Lượt xem</div>
-                    </div>
+  <div className="rounded-2xl bg-slate-900/70 p-3">
+    <div className="text-xl font-bold">
+      {project.views || project.view_count || 0}
+    </div>
 
-                    <div className="rounded-2xl bg-slate-900/70 p-3">
-                      <div className="text-xl font-bold">
-                        {project.investors || 0}
-                      </div>
-                      <div className="text-xs text-white/50">Nhà đầu tư</div>
-                    </div>
+    <div className="text-xs text-white/50">
+      Lượt xem
+    </div>
+  </div>
 
-                    <div className="rounded-2xl bg-slate-900/70 p-3">
-                      <div className="text-xl font-bold">
-                        {project.esg_score || 0}
-                      </div>
-                      <div className="text-xs text-white/50">ESG</div>
-                    </div>
-                  </div>
+  <div className="rounded-2xl bg-slate-900/70 p-3">
+    <div className="text-xl font-bold">
+      {project.investor_count || 0}
+    </div>
+
+    <div className="text-xs text-white/50">
+      Nhà đầu tư
+    </div>
+  </div>
+
+  <div className="rounded-2xl bg-slate-900/70 p-3">
+    <div className="text-xl font-bold">
+      {project.esg_score || 0}
+    </div>
+
+    <div className="text-xs text-white/50">
+      ESG
+    </div>
+  </div>
+</div>
 
                   <div className="mt-5 flex flex-wrap gap-3">
   <button

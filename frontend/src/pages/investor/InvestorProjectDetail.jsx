@@ -79,19 +79,16 @@ export default function InvestorProjectDetail() {
   };
 
   const startChat = async () => {
-    try {
-      await api.post("/chat/conversations", {
-        project_id: id,
-        sender_id: "investor-demo",
-        receiver_id: "business-demo",
-        title: project?.title || "Trao đổi dự án",
-      });
+  try {
+    await api.post("/chat/conversations/project", {
+      project_id: id,
+    });
 
-      alert("Đã tạo cuộc trò chuyện. Vào mục Tin nhắn để trao đổi.");
-    } catch (error) {
-      alert(error.response?.data?.message || "Lỗi tạo chat");
-    }
-  };
+    alert("Đã tạo cuộc trò chuyện. Vào mục Tin nhắn để trao đổi.");
+  } catch (error) {
+    alert(error.response?.data?.message || "Lỗi tạo chat");
+  }
+};
 
   if (loading) {
     return (

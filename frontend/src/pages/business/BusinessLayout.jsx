@@ -20,6 +20,7 @@ import { BarChart3 } from "lucide-react";
 import { MessageCircle } from "lucide-react";
 import { Brain } from "lucide-react";
 import { Sparkles } from "lucide-react";
+import { HandCoins } from "lucide-react";
 export function cn(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -53,9 +54,10 @@ const sidebarItems = [
   { label: "Báo cáo", icon: ShieldCheck, to: "/business/reports" },
   { label: "Tài liệu", icon: FolderKanban, to: "/business/documents" },
   { label: "Tin nhắn",icon: MessageCircle,to: "/business/chat",},
+  { label: "Yêu cầu góp vốn",icon: HandCoins, to: "/business/investment-requests"},
   { label: "Phân tích", icon: BarChart3, to: "/business/analytics" },
   { label: "AI Tools",icon: Sparkles,to: "/business/ai-tools",},
-  {label: "AI tư vấn",icon: Bot,to: "/business/ai",},
+  //{label: "AI tư vấn",icon: Bot,to: "/business/ai",},
   {label: "Phù hợp nhà đầu tư",icon: Brain,to: "/business/investor-matching",}
 
 ];

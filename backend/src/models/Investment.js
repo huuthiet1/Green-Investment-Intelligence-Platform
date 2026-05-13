@@ -4,7 +4,7 @@ const investmentSchema = new mongoose.Schema(
   {
     investor_id: {
       type: String,
-      default: "investor-demo",
+      required: true,
     },
 
     project_id: {
@@ -16,7 +16,7 @@ const investmentSchema = new mongoose.Schema(
     funding_round_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "FundingRound",
-      required: false,
+      required: true,
     },
 
     amount: {
@@ -34,6 +34,21 @@ const investmentSchema = new mongoose.Schema(
       type: String,
       enum: ["pending", "approved", "rejected", "cancelled"],
       default: "pending",
+    },
+
+    rejection_reason: {
+      type: String,
+      default: "",
+    },
+
+    approved_at: {
+      type: Date,
+      default: null,
+    },
+
+    rejected_at: {
+      type: Date,
+      default: null,
     },
   },
   { timestamps: true }

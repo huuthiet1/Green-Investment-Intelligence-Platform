@@ -1,6 +1,8 @@
 import express from "express";
+import mongoose from "mongoose";
 import Project from "../models/Project.js";
 import upload from "../middleware/upload.js";
+import InvestorInterest from "../models/InvestorInterest.js";
 
 const router = express.Router();
 
@@ -31,38 +33,81 @@ const statusMap = {
 };
 
 // ======================================================
-// GET ALL PROJECTS
+// GET PUBLIC PROJECTS
+// Investor xem project approved
 // API: GET /api/projects
 // ======================================================
 
 router.get("/", async (req, res) => {
   try {
-    const projects = await Project.find().sort({
+    const projects = await Project.find({
+      status: "approved",
+    }).sort({
       createdAt: -1,
     });
 
     res.json({ projects });
   } catch (error) {
-    console.error("GET ALL PROJECTS ERROR:", error);
+    console.error("GET PROJECTS ERROR:", error);
 
     res.status(500).json({
-      message: "Lỗi lấy danh sách tất cả dự án",
+      message: "Lỗi lấy danh sách dự án",
     });
   }
 });
 
 // ======================================================
 // GET MY PROJECTS
+// Business chỉ thấy project của mình
 // API: GET /api/projects/my
 // ======================================================
 
 router.get("/my", async (req, res) => {
   try {
-    const projects = await Project.find().sort({
+    const projects = await Project.find({
+      owner_id: req.user._id.toString(),
+    }).sort({
       createdAt: -1,
     });
 
-    res.json({ projects });
+    const projectIds = projects.map((p) => p._id);
+
+    // lấy danh sách investor quan tâm
+    const interests = await InvestorInterest.find({
+      project_id: { $in: projectIds },
+    });
+
+    // map số investor theo project
+    const interestMap = {};
+
+    interests.forEach((item) => {
+      const id = item.project_id.toString();
+
+      interestMap[id] = (interestMap[id] || 0) + 1;
+    });
+
+    // format dữ liệu trả về
+    const formattedProjects = projects.map((project) => {
+      const obj = project.toObject();
+
+      return {
+        ...obj,
+
+        views: obj.views || 0,
+
+        investor_count:
+          interestMap[project._id.toString()] || 0,
+
+        esg_score:
+          obj.esg_score ||
+          obj.total_esg_score ||
+          0,
+      };
+    });
+
+    res.json({
+      projects: formattedProjects,
+    });
   } catch (error) {
     console.error("GET MY PROJECTS ERROR:", error);
 
@@ -79,6 +124,12 @@ router.get("/my", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({
+        message: "ID dự án không hợp lệ",
+      });
+    }
+
     const project = await Project.findById(req.params.id);
 
     if (!project) {
@@ -109,8 +160,8 @@ router.post("/", upload.single("thumbnail"), async (req, res) => {
     const project = await Project.create({
       ...body,
 
-      // Owner
-      owner_id: body.owner_id || undefined,
+      // Chủ sở hữu = user đang login
+      owner_id: req.user._id.toString(),
 
       // Category
       category_name:
@@ -118,7 +169,7 @@ router.post("/", upload.single("thumbnail"), async (req, res) => {
         categoryMap[body.category_id] ||
         "Công nghệ sạch",
 
-      // Status
+      // Status mặc định
       status:
         body.status ||
         statusMap[body.status_id] ||
@@ -141,7 +192,7 @@ router.post("/", upload.single("thumbnail"), async (req, res) => {
         body.jobs_created_est || 0
       ),
 
-      // Upload thumbnail
+      // Thumbnail
       thumbnail_url: req.file
         ? `/uploads/projects/${req.file.filename}`
         : "",
@@ -162,6 +213,7 @@ router.post("/", upload.single("thumbnail"), async (req, res) => {
 
 // ======================================================
 // UPDATE PROJECT
+// Chỉ owner mới sửa được
 // API: PUT /api/projects/:id
 // ======================================================
 
@@ -169,22 +221,37 @@ router.put("/:id", upload.single("thumbnail"), async (req, res) => {
   try {
     const body = req.body;
 
+    const project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res.status(404).json({
+        message: "Không tìm thấy dự án",
+      });
+    }
+
+    // Check owner
+    if (
+      project.owner_id?.toString() !==
+      req.user._id.toString()
+    ) {
+      return res.status(403).json({
+        message: "Không có quyền sửa dự án này",
+      });
+    }
+
     const updateData = {
       ...body,
 
-      // Category
       category_name:
         body.category_name ||
         categoryMap[body.category_id] ||
         body.category_name,
 
-      // Status
       status:
         body.status ||
         statusMap[body.status_id] ||
         body.status,
 
-      // Number fields
       capital_needed: Number(body.capital_needed || 0),
 
       roi_expected: Number(body.roi_expected || 0),
@@ -202,29 +269,23 @@ router.put("/:id", upload.single("thumbnail"), async (req, res) => {
       ),
     };
 
-    // Update thumbnail if uploaded
     if (req.file) {
       updateData.thumbnail_url =
         `/uploads/projects/${req.file.filename}`;
     }
 
-    const project = await Project.findByIdAndUpdate(
-      req.params.id,
-      updateData,
-      {
-        new: true,
-      }
-    );
-
-    if (!project) {
-      return res.status(404).json({
-        message: "Không tìm thấy dự án",
-      });
-    }
+    const updatedProject =
+      await Project.findByIdAndUpdate(
+        req.params.id,
+        updateData,
+        {
+          new: true,
+        }
+      );
 
     res.json({
       message: "Cập nhật dự án thành công",
-      project,
+      project: updatedProject,
     });
   } catch (error) {
     console.error("UPDATE PROJECT ERROR:", error);
@@ -237,20 +298,31 @@ router.put("/:id", upload.single("thumbnail"), async (req, res) => {
 
 // ======================================================
 // DELETE PROJECT
+// Chỉ owner mới xóa được
 // API: DELETE /api/projects/:id
 // ======================================================
 
 router.delete("/:id", async (req, res) => {
   try {
-    const project = await Project.findByIdAndDelete(
-      req.params.id
-    );
+    const project = await Project.findById(req.params.id);
 
     if (!project) {
       return res.status(404).json({
         message: "Không tìm thấy dự án",
       });
     }
+
+    // Check owner
+    if (
+      project.owner_id?.toString() !==
+      req.user._id.toString()
+    ) {
+      return res.status(403).json({
+        message: "Không có quyền xóa dự án này",
+      });
+    }
+
+    await Project.findByIdAndDelete(req.params.id);
 
     res.json({
       message: "Xóa dự án thành công",

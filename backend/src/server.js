@@ -6,6 +6,7 @@ import http from "http";
 import { Server } from "socket.io";
 
 import { connectDB } from "./config/db.js";
+import { protect, allowRoles } from "./middleware/auth.js";
 
 // ================= BUSINESS ROUTES =================
 import authRoutes from "./routes/authRoutes.js";
@@ -38,15 +39,12 @@ import adminAIAssistantRoutes from "./routes/adminAIAssistantRoutes.js";
 import investmentRoutes from "./routes/investmentRoutes.js";
 import investorAIRoutes from "./routes/investorAIRoutes.js";
 
-// ================= ENV CONFIG =================
 dotenv.config();
 
-// ================= APP INIT =================
 const app = express();
 
 connectDB();
 
-// ================= HTTP + SOCKET SERVER =================
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -58,7 +56,7 @@ const io = new Server(server, {
 
 app.set("io", io);
 
-// ================= SOCKET.IO EVENTS =================
+// ================= SOCKET.IO =================
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);
 
@@ -91,11 +89,9 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-// Cho phép frontend xem file upload
 app.use("/uploads", express.static("uploads"));
 
-// ================= HEALTH CHECK =================
+// ================= PUBLIC ROUTES =================
 app.get("/", (req, res) => {
   res.send("API đang chạy...");
 });
@@ -106,114 +102,60 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// ======================================================
-// ===================== BUSINESS API ====================
-// ======================================================
-
-// Đăng nhập / đăng ký
+// Auth public
 app.use("/api/auth", authRoutes);
 
-// Dashboard business
-app.use("/api/dashboard", dashboardRoutes);
-
-// Business profile / business info
-app.use("/api/business", businessRoutes);
-
-// Dự án
-// Frontend gọi: /api/projects
-app.use("/api/projects", projectRoutes);
-
-// Gọi vốn
-// Frontend gọi: /api/funding
-app.use("/api/funding", fundingRoutes);
-
-// Chat realtime business ↔ investor
-// Frontend gọi: /api/chat
-app.use("/api/chat", chatRoutes);
-
-// AI bot chat chung
-// Frontend gọi: /api/ai-bot
+// AI bot public hoặc private đều được
 app.use("/api/ai-bot", aiBotRoutes);
 
-// Investor interest / favorite
-// Frontend gọi: /api/investors
-app.use("/api/investors", investorRoutes);
-
-// ESG
-// Frontend gọi: /api/esg
-app.use("/api/esg", esgRoutes);
-
-// Báo cáo
-// Frontend gọi: /api/reports
-app.use("/api/reports", reportRoutes);
-
-// Tài liệu dự án
-// Frontend gọi: /api/documents
-app.use("/api/documents", documentRoutes);
-
-// Analytics business
-// Frontend gọi: /api/analytics
-app.use("/api/analytics", analyticsRoutes);
-
-// Notification business
-// Frontend gọi: /api/notifications
-app.use("/api/notifications", notificationRoutes);
-
-// Business AI bot riêng
-// Frontend gọi: /api/business-bot
-app.use("/api/business-bot", businessBotRoutes);
-
-// AI matching investor
-// Frontend gọi: /api/matching
-app.use("/api/matching", matchingRoutes);
-
-// AI tools business
-// Frontend gọi: /api/ai-tools
-app.use("/api/ai-tools", aiToolsRoutes);
-
 // ======================================================
-// ===================== INVESTOR API ====================
+// BUSINESS / INVESTOR SHARED PRIVATE ROUTES
+// Yêu cầu đăng nhập, dữ liệu sẽ lấy theo req.user trong từng route
 // ======================================================
 
-// Investor góp vốn
-// Frontend gọi: /api/investments
-app.use("/api/investments", investmentRoutes);
+app.use("/api/dashboard", protect, dashboardRoutes);
+app.use("/api/business", protect, businessRoutes);
+app.use("/api/projects", protect, projectRoutes);
+app.use("/api/funding", protect, fundingRoutes);
+app.use("/api/chat", protect, chatRoutes);
+app.use("/api/esg", protect, esgRoutes);
+app.use("/api/reports", protect, reportRoutes);
+app.use("/api/documents", protect, documentRoutes);
+app.use("/api/analytics", protect, analyticsRoutes);
+app.use("/api/notifications", protect, notificationRoutes);
+app.use("/api/business-bot", protect, businessBotRoutes);
+app.use("/api/matching", protect, matchingRoutes);
+app.use("/api/ai-tools", protect, aiToolsRoutes);
 
-// Investor AI tư vấn đầu tư
-// Frontend gọi: /api/investor-ai
-app.use("/api/investor-ai", investorAIRoutes);
+// Investor
+app.use("/api/investors", protect, investorRoutes);
+app.use("/api/investments", protect, investmentRoutes);
+app.use("/api/investor-ai", protect, investorAIRoutes);
 
 // ======================================================
-// ======================= ADMIN API =====================
+// ADMIN PRIVATE ROUTES
+// Chỉ admin mới được vào
 // ======================================================
 
-// Admin dashboard / users / projects / reports
-// Frontend gọi: /api/admin
-app.use("/api/admin", adminRoutes);
+app.use("/api/admin", protect, allowRoles("admin"), adminRoutes);
+app.use(
+  "/api/admin/notifications",
+  protect,
+  allowRoles("admin"),
+  notificationRoutesAdmin
+);
+app.use("/api/system", protect, allowRoles("admin"), systemRoutes);
+app.use("/api/fraud", protect, allowRoles("admin"), fraudRoutes);
+app.use("/api/audit-logs", protect, allowRoles("admin"), auditRoutes);
+app.use(
+  "/api/admin-ai",
+  protect,
+  allowRoles("admin"),
+  adminAIAssistantRoutes
+);
 
-// Notification riêng cho admin
-// Frontend gọi: /api/admin/notifications
-app.use("/api/admin/notifications", notificationRoutesAdmin);
-
-// System settings
-// Frontend gọi: /api/system/settings
-app.use("/api/system", systemRoutes);
-
-// AI Fraud Detection
-// Frontend gọi: /api/fraud
-app.use("/api/fraud", fraudRoutes);
-
-// KYC Verification
-// Frontend gọi: /api/kyc
-app.use("/api/kyc", kycRoutes);
-
-// Audit logs
-// Frontend gọi: /api/audit-logs
-app.use("/api/audit-logs", auditRoutes);
-
-// Admin AI Assistant
-// Frontend gọi: /api/admin-ai/chat
-app.use("/api/admin-ai", adminAIAssistantRoutes);
+// KYC cho business/investor gửi, admin cũng xem được trong route
+app.use("/api/kyc", protect, kycRoutes);
 
 // ================= 404 HANDLER =================
 app.use((req, res) => {

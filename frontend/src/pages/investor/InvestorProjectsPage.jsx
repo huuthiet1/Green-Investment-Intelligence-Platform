@@ -77,33 +77,23 @@ export default function InvestorProjectsPage() {
     }
   };
 
-  const sendInterest = async (project) => {
+ const sendInterest = async (project) => {
   try {
-    // 1. gửi quan tâm
+    const projectId = project._id || project.id;
+
     await api.post("/investors/interests", {
-      project_id: project._id || project.id,
+      project_id: projectId,
       message: "Tôi quan tâm đến dự án này.",
-      estimated_budget: 0,
+      estimated_budget: project.capital_needed || 0,
     });
 
-    // 2. tạo conversation
-    await api.post("/chat/conversations", {
-      project_id: project._id || project.id,
-      sender_id: "investor-demo",
-      receiver_id: "business-demo",
-      title: `Trao đổi đầu tư - ${
-        project.title || "Dự án"
-      }`,
+    await api.post("/chat/conversations/project", {
+      project_id: projectId,
     });
 
-    alert(
-      "Đã gửi quan tâm đầu tư và tạo cuộc trò chuyện"
-    );
+    alert("Đã gửi quan tâm và tạo cuộc trò chuyện");
   } catch (error) {
-    alert(
-      error.response?.data?.message ||
-        "Lỗi gửi quan tâm đầu tư"
-    );
+    alert(error.response?.data?.message || "Lỗi gửi quan tâm");
   }
 };
 

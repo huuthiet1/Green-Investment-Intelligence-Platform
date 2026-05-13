@@ -49,7 +49,7 @@ import BusinessAnalyticsPage from "./pages/business/BusinessAnalyticsPage";
 import BusinessAIPage from "./pages/business/BusinessAIPage";
 import BusinessInvestorMatchingPage from "./pages/business/BusinessInvestorMatchingPage";
 import BusinessAIToolsPage from "./pages/business/BusinessAIToolsPage";
-
+import BusinessInvestmentRequestsPage from "./pages/business/BusinessInvestmentRequestsPage";
 export default function App() {
   return (
     <BrowserRouter>
@@ -125,11 +125,11 @@ export default function App() {
           <Route path="chat" element={<ChatPage />} />
           <Route path="investor-matching" element={<BusinessInvestorMatchingPage />} />
           <Route path="ai-tools" element={<BusinessAIToolsPage />} />
+          <Route path="investment-requests" element={<BusinessInvestmentRequestsPage />} />
           <Route path="ai" element={<BusinessAIToolsPage />} />
         </Route>
-        
-        <Route path="/chat" element={<ChatPage />} />
-        <Route path="/smart-bot" element={<SmartBotPage />} />
+<Route path="chat" element={<InvestorChatPage />} />       
+<Route path="chat" element={<ChatPage mode="business" />} />        <Route path="/smart-bot" element={<SmartBotPage />} />
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
