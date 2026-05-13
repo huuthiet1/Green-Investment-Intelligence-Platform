@@ -17,6 +17,10 @@
   "engines": {
     "node": ">=18"
   },
+  "devDependencies": {
+  "@vitejs/plugin-react": "latest",
+  "vite": "^8.0.8"
+},
 
   "license": "ISC"
 }
