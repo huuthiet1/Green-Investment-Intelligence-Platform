@@ -1,8 +1,13 @@
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5001", {
-  withCredentials: true,
-  autoConnect: true,
-});
+const socket = io(
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5001"
+    : "/",
+  {
+    withCredentials: true,
+    autoConnect: true,
+  }
+);
 
 export default socket;

@@ -4,7 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import http from "http";
 import { Server } from "socket.io";
-
+import path from "path";
 import { connectDB } from "./config/db.js";
 import { protect, allowRoles } from "./middleware/auth.js";
 
@@ -42,14 +42,17 @@ import investorAIRoutes from "./routes/investorAIRoutes.js";
 dotenv.config();
 
 const app = express();
-
+const __dirname = path.resolve();
 connectDB();
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin:
+  process.env.NODE_ENV === "production"
+    ? process.env.CLIENT_URL
+    : "http://localhost:5173",
     credentials: true,
   },
 });
@@ -81,8 +84,10 @@ io.on("connection", (socket) => {
 // ================= GLOBAL MIDDLEWARE =================
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
-    credentials: true,
+origin:
+  process.env.NODE_ENV === "production"
+    ? process.env.CLIENT_URL
+    : "http://localhost:5173",    credentials: true,
   })
 );
 
@@ -90,6 +95,8 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
+
+
 
 // ================= PUBLIC ROUTES =================
 app.get("/", (req, res) => {
@@ -156,11 +163,29 @@ app.use(
 
 // KYC cho business/investor gửi, admin cũng xem được trong route
 app.use("/api/kyc", protect, kycRoutes);
+// ================= FRONTEND PRODUCTION =================
+if (process.env.NODE_ENV === "production") {
+  app.use(
+    express.static(
+      path.join(__dirname, "../frontend/dist")
+    )
+  );
 
-// ================= 404 HANDLER =================
-app.use((req, res) => {
+  app.get("*", (req, res) => {
+    res.sendFile(
+      path.join(
+        __dirname,
+        "../frontend/dist/index.html"
+      )
+    );
+  });
+}
+   
+
+// ================= API 404 =================
+app.use("/api", (req, res) => {
   res.status(404).json({
-    message: "Route không tồn tại",
+    message: "Route API không tồn tại",
     path: req.originalUrl,
   });
 });
