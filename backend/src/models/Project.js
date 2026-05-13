@@ -1,4 +1,4 @@
-import { s } from "framer-motion/client";
+
 import mongoose from "mongoose";
 
 const projectSchema = new mongoose.Schema(
