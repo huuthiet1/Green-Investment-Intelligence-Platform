@@ -7,7 +7,6 @@ import HomePage from "./pages/HomePage";
 import NotFound from "./pages/NotFound";
 import ChatPage from "./pages/chat/ChatPage";
 import SmartBotPage from "./pages/chatbot/SmartBotPage";
-
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 // Admin
@@ -59,7 +58,6 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/home" element={<HomePage />} />
-
         {/* Admin */}
        <Route
   path="/admin"

@@ -99,9 +99,7 @@ app.use("/uploads", express.static("uploads"));
 
 
 // ================= PUBLIC ROUTES =================
-app.get("/", (req, res) => {
-  res.send("API đang chạy...");
-});
+
 
 app.get("/api/health", (req, res) => {
   res.json({
@@ -189,6 +187,14 @@ app.use("/api", (req, res) => {
     path: req.originalUrl,
   });
 });
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../../frontend/dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
+  });
+}
 
 // ================= START SERVER =================
 const PORT = process.env.PORT || 5001;
