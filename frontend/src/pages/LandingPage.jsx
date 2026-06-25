@@ -169,9 +169,28 @@ function cn(...classes) {
 
 function Section({ className = "", children }) {
   return (
-    <section className={cn("mx-auto max-w-7xl px-6 lg:px-8", className)}>
+    <section
+      className={cn(
+        "mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8",
+        className
+      )}
+    >
       {children}
     </section>
+  );
+}
+
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen overflow-x-hidden bg-white text-slate-800">
+      <HeroSection />
+      <AnalysisSection />
+      <FeaturesSection />
+      <ProjectShowcaseSection />
+      <RolesSection />
+      <StepsSection />
+      <CTASection />
+    </div>
   );
 }
 
@@ -304,16 +323,19 @@ function SectionHeading({ eyebrow, title, description }) {
 
 function Header() {
   return (
-    <div className="relative mx-auto max-w-7xl px-6 py-6 lg:px-8">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-emerald-100 ring-1 ring-emerald-200">
+    <div className="relative mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
+      <div className="flex items-center justify-between gap-4">
+<div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 ring-1 ring-emerald-200">
             <Leaf className="h-6 w-6 text-emerald-500" />
           </div>
-          <div>
-            <p className="text-sm text-slate-500">{CONTENT.brand.en}</p>
-            <h1 className="text-lg font-semibold text-slate-900">
-              {CONTENT.brand.vi}
+
+          <div className="min-w-0">
+            <p className="truncate text-xs text-slate-500 sm:text-sm">
+              {CONTENT.brand.en}
+            </p>
+
+<h1 className="truncate text-xs sm:text-sm md:text-lg font-semibold text-slate-900">              {CONTENT.brand.vi}
             </h1>
           </div>
         </div>
@@ -322,8 +344,15 @@ function Header() {
           <Button asChild variant="ghost">
             <Link to="/login">Đăng nhập</Link>
           </Button>
+
           <Button asChild variant="primary">
             <Link to="/register">Đăng ký</Link>
+          </Button>
+        </div>
+
+        <div className="flex md:hidden">
+          <Button asChild variant="primary">
+            <Link to="/login">Bắt đầu</Link>
           </Button>
         </div>
       </div>
@@ -352,10 +381,10 @@ function HeroSection() {
           </div>
 
           <div className="space-y-5">
-            <h2 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight text-slate-900 md:text-6xl">
+            <h2 className="max-w-3xl text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-slate-900">
               {CONTENT.hero.title}
             </h2>
-            <p className="max-w-2xl text-lg leading-8 text-slate-600">
+            <p className="max-w-2xl text-base sm:text-lg leading-7 sm:leading-8 text-slate-600">
               {CONTENT.hero.description}
             </p>
           </div>
@@ -397,14 +426,13 @@ function HeroSection() {
                 </div>
               </div>
 
-              <div className="space-y-4">
+           <div className="space-y-3">
                 {CONTENT.dashboardItems.map((item) => {
                   const Icon = item.icon;
                   return (
                     <div
                       key={item.title}
-                      className="flex items-start gap-4 rounded-2xl border border-emerald-100 bg-emerald-50 p-4"
-                    >
+className="flex items-start gap-3 rounded-2xl border border-emerald-100 bg-emerald-50 p-3 sm:p-4"                    >
                       <div className="rounded-xl bg-emerald-100 p-3 text-emerald-500">
                         <Icon className="h-5 w-5" />
                       </div>
@@ -506,7 +534,37 @@ function StepsSection() {
     </section>
   );
 }
+function ProjectShowcaseSection() {
+  return (
+    <Section className="py-20">
+      <SectionHeading
+        eyebrow="Giao diện hệ thống"
+        title="Một số màn hình nổi bật"
+        description="Hệ thống được thiết kế hiện đại, trực quan và tối ưu trên mọi thiết bị."
+      />
 
+      <div className="grid gap-6 md:grid-cols-3">
+        <img
+          src="/images/dashboard.png"
+          alt="dashboard"
+          className="rounded-3xl shadow-lg"
+        />
+
+        <img
+          src="/images/project.png"
+          alt="project"
+          className="rounded-3xl shadow-lg"
+        />
+
+        <img
+          src="/images/esg.png"
+          alt="esg"
+          className="rounded-3xl shadow-lg"
+        />
+      </div>
+    </Section>
+  );
+}
 function CTASection() {
   return (
     <Section className="py-20">
@@ -516,8 +574,7 @@ function CTASection() {
             <p className="text-sm font-medium uppercase tracking-[0.25em] text-emerald-600">
               Sẵn sàng triển khai
             </p>
-            <h3 className="mt-4 text-3xl font-bold text-slate-900 md:text-4xl">
-              Biến đồ án thành một landing page thuyết phục và hiện đại
+<h3 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900">              Biến đồ án thành một landing page thuyết phục và hiện đại
             </h3>
             <p className="mt-4 leading-7 text-slate-600">
               Giao diện này phù hợp để dùng làm trang chủ cho đồ án tốt nghiệp,
@@ -526,8 +583,8 @@ function CTASection() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-4">
-            <Button asChild variant="primary" className="px-6 py-6 text-base">
+<div className="flex flex-col sm:flex-row gap-4">
+              <Button asChild variant="primary" className="px-6 py-6 text-base">
               <Link to="/register">Dùng làm trang chủ</Link>
             </Button>
             <Button asChild variant="outline" className="px-6 py-6 text-base">
@@ -540,15 +597,3 @@ function CTASection() {
   );
 }
 
-export default function LandingPage() {
-  return (
-    <div className="min-h-screen bg-white text-slate-800">
-      <HeroSection />
-      <AnalysisSection />
-      <FeaturesSection />
-      <RolesSection />
-      <StepsSection />
-      <CTASection />
-    </div>
-  );
-}
