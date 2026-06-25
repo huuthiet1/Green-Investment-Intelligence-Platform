@@ -193,9 +193,9 @@ router.post("/", upload.single("thumbnail"), async (req, res) => {
       ),
 
       // Thumbnail
-     thumbnail_url: req.file
-  ? req.file.path
-  : "",
+      thumbnail_url: req.file
+        ? `/uploads/projects/${req.file.filename}`
+        : "",
     });
 
     res.status(201).json({
@@ -270,8 +270,9 @@ router.put("/:id", upload.single("thumbnail"), async (req, res) => {
     };
 
     if (req.file) {
-  updateData.thumbnail_url = req.file.path;
-}
+      updateData.thumbnail_url =
+        `/uploads/projects/${req.file.filename}`;
+    }
 
     const updatedProject =
       await Project.findByIdAndUpdate(
