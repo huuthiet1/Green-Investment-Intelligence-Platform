@@ -27,7 +27,7 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import businessBotRoutes from "./routes/businessBotRoutes.js";
 import matchingRoutes from "./routes/matchingRoutes.js";
 import aiToolsRoutes from "./routes/aiToolsRoutes.js";
-
+import greenCreditRoutes from "./routes/greenCreditRoutes.js";
 // ================= ADMIN ROUTES =================
 import adminRoutes from "./routes/adminRoutes.js";
 import notificationRoutesAdmin from "./routes/notificationRoutesAdmin.js";
@@ -36,7 +36,7 @@ import fraudRoutes from "./routes/fraudRoutes.js";
 import kycRoutes from "./routes/kycRoutes.js";
 import auditRoutes from "./routes/auditRoutes.js";
 import adminAIAssistantRoutes from "./routes/adminAIAssistantRoutes.js";
-
+import financialFeasibilityRoutes from "./routes/financialFeasibilityRoutes.js";
 // ================= INVESTOR ROUTES =================
 import investmentRoutes from "./routes/investmentRoutes.js";
 import investorAIRoutes from "./routes/investorAIRoutes.js";
@@ -124,7 +124,7 @@ app.use("/api/notifications", protect, notificationRoutes);
 app.use("/api/business-bot", protect, businessBotRoutes);
 app.use("/api/matching", protect, matchingRoutes);
 app.use("/api/ai-tools", protect, aiToolsRoutes);
-
+app.use("/api/green-credit-score", protect, greenCreditRoutes);
 // ================= INVESTOR ROUTES =================
 app.use("/api/investors", protect, investorRoutes);
 app.use("/api/investments", protect, investmentRoutes);
@@ -139,7 +139,11 @@ app.use(
   allowRoles("admin"),
   notificationRoutesAdmin
 );
-
+app.use(
+  "/api/financial-feasibility",
+  protect,
+  financialFeasibilityRoutes
+);
 app.use("/api/system", protect, allowRoles("admin"), systemRoutes);
 app.use("/api/fraud", protect, allowRoles("admin"), fraudRoutes);
 app.use("/api/audit-logs", protect, allowRoles("admin"), auditRoutes);

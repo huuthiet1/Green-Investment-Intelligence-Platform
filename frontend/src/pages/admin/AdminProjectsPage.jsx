@@ -70,7 +70,27 @@ export default function AdminProjectsPage() {
       alert(error.response?.data?.message || "Lỗi cập nhật trạng thái");
     }
   };
+const updateESG = async (id, score) => {
+  try {
+    await api.put(
+      `/admin/projects/${id}/esg-score`,
+      {
+        esg_score: Number(score),
+      }
+    );
 
+    await fetchProjects();
+
+    alert("Cập nhật ESG thành công");
+  } catch (error) {
+    console.error("UPDATE ESG ERROR:", error);
+
+    alert(
+      error.response?.data?.message ||
+        "Lỗi cập nhật ESG"
+    );
+  }
+};
   const deleteProject = async (id) => {
     if (!window.confirm("Bạn có chắc muốn xóa dự án này?")) return;
 
@@ -270,9 +290,16 @@ export default function AdminProjectsPage() {
 
       {selectedProject && (
         <ProjectDetailModal
-          project={selectedProject}
-          onClose={() => setSelectedProject(null)}
-          onApprove={() => {
+  project={selectedProject}
+  onClose={() => setSelectedProject(null)}
+  onSaveESG={(score) =>
+    updateESG(
+      selectedProject._id ||
+        selectedProject.id,
+      score
+    )
+  }
+  onApprove={() => {
             updateStatus(selectedProject._id || selectedProject.id, "approved");
             setSelectedProject(null);
           }}
@@ -321,15 +348,29 @@ function StatusBadge({ status }) {
   );
 }
 
-function ProjectDetailModal({ project, onClose, onApprove, onReject }) {
+function ProjectDetailModal({
+  project,
+  onClose,
+  onApprove,
+  onReject,
+  onSaveESG,
+}) {
+  const [esgScore, setEsgScore] =
+    useState(project.esg_score || 0);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
       <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-3xl border border-white/10 bg-[#101827] p-6 text-white">
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
-            <p className="text-sm text-white/45">Chi tiết dự án</p>
+            <p className="text-sm text-white/45">
+              Chi tiết dự án
+            </p>
+
             <h2 className="mt-1 text-2xl font-bold">
-              {project.title || project.name || "Dự án không tên"}
+              {project.title ||
+                project.name ||
+                "Dự án không tên"}
             </h2>
           </div>
 
@@ -350,32 +391,107 @@ function ProjectDetailModal({ project, onClose, onApprove, onReject }) {
         )}
 
         <div className="grid gap-4 md:grid-cols-2">
-          <Info label="Mã dự án" value={project.project_code || "Không có"} />
-          <Info label="Danh mục" value={project.category_name || "Chưa có"} />
+          <Info
+            label="Mã dự án"
+            value={
+              project.project_code ||
+              "Không có"
+            }
+          />
+
+          <Info
+            label="Danh mục"
+            value={
+              project.category_name ||
+              "Chưa có"
+            }
+          />
+
           <Info
             label="Vốn cần gọi"
-            value={`${Number(project.capital_needed || 0).toLocaleString(
+            value={`${Number(
+              project.capital_needed || 0
+            ).toLocaleString(
               "vi-VN"
-            )} ${project.capital_currency || "VND"}`}
+            )} ${
+              project.capital_currency ||
+              "VND"
+            }`}
           />
-          <Info label="ROI kỳ vọng" value={`${project.roi_expected || 0}%`} />
-          <Info label="Rủi ro" value={project.risk_level || "medium"} />
-          <Info label="ESG" value={project.esg_score || 0} />
-          <Info label="Trạng thái" value={project.status || "pending"} />
+
+          <Info
+            label="ROI kỳ vọng"
+            value={`${
+              project.roi_expected || 0
+            }%`}
+          />
+
+          <Info
+            label="Rủi ro"
+            value={
+              project.risk_level ||
+              "medium"
+            }
+          />
+
+          <div className="rounded-2xl bg-slate-900/70 p-4">
+            <p className="text-sm text-white/45">
+              Điểm ESG
+            </p>
+
+            <input
+              type="number"
+              min="0"
+              max="100"
+              value={esgScore}
+              onChange={(e) =>
+                setEsgScore(
+                  e.target.value
+                )
+              }
+              className="mt-2 w-full rounded-xl border border-white/10 bg-slate-800 px-3 py-2 text-white outline-none"
+            />
+          </div>
+
+          <Info
+            label="Trạng thái"
+            value={
+              project.status ||
+              "pending"
+            }
+          />
+
           <Info
             label="Thời gian"
-            value={`${project.project_duration_months || 0} tháng`}
+            value={`${
+              project.project_duration_months ||
+              0
+            } tháng`}
           />
         </div>
 
         <div className="mt-5 rounded-2xl bg-slate-900/70 p-5">
-          <p className="mb-2 text-sm text-white/45">Mô tả</p>
+          <p className="mb-2 text-sm text-white/45">
+            Mô tả
+          </p>
+
           <p className="whitespace-pre-wrap leading-7 text-white/75">
-            {project.description || project.short_description || "Chưa có mô tả"}
+            {project.description ||
+              project.short_description ||
+              "Chưa có mô tả"}
           </p>
         </div>
 
-        <div className="mt-6 flex justify-end gap-3">
+        <div className="mt-6 flex flex-wrap justify-end gap-3">
+          <button
+            onClick={() =>
+              onSaveESG(esgScore)
+            }
+            className="rounded-2xl bg-blue-500 px-5 py-3 font-medium text-white hover:bg-blue-400"
+          >
+            Lưu ESG
+          </button>
+
           <button
             onClick={onReject}
             className="rounded-2xl bg-yellow-500 px-5 py-3 font-medium text-slate-950 hover:bg-yellow-400"

@@ -10,6 +10,7 @@ import SmartBotPage from "./pages/chatbot/SmartBotPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 // Admin
+import AdminFinancialFeasibilityPage from "./pages/admin/AdminFinancialFeasibilityPage";
 import AdminAuditLogsPage from "./pages/admin/AdminAuditLogsPage";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -34,6 +35,7 @@ import InvestorLayout from "./pages/investor/InvestorLayout";
 import InvestorProjectsPage from "./pages/investor/InvestorProjectsPage";
 import InvestorDashboard from "./pages/investor/InvestorDashboard";
 // Business
+import GreenCreditScorePage from "./pages/business/GreenCreditScorePage";
 import BusinessLayout from "./pages/business/BusinessLayout";
 import BusinessDashboard from "./pages/business/BusinessDashboard";
 import BusinessProjectsPage from "./pages/business/BusinessProjectsPage";
@@ -73,6 +75,7 @@ export default function App() {
   <Route path="reports" element={<AdminReportsPage />} />
   <Route path="moderation" element={<AdminModerationPage />} />
   <Route path="analytics" element={<AdminAnalyticsPage />} />
+  <Route path="financial-feasibility" element={<AdminFinancialFeasibilityPage />} />
   <Route path="system-settings" element={<AdminSystemSettingsPage />} />
   <Route path="approval-workflow" element={<AdminApprovalWorkflowPage />} />
   <Route path="kyc" element={<AdminKYCPage />} />
@@ -125,6 +128,7 @@ export default function App() {
           <Route path="ai-tools" element={<BusinessAIToolsPage />} />
           <Route path="investment-requests" element={<BusinessInvestmentRequestsPage />} />
           <Route path="ai" element={<BusinessAIToolsPage />} />
+          <Route path="green-credit-score" element={<GreenCreditScorePage />} />
         </Route>
 <Route path="chat" element={<InvestorChatPage />} />       
 <Route path="chat" element={<ChatPage mode="business" />} />        <Route path="/smart-bot" element={<SmartBotPage />} />

@@ -141,6 +141,45 @@ router.put("/projects/:id/review", async (req, res) => {
     });
   }
 });
+router.put("/projects/:id/esg-score", async (req, res) => {
+  try {
+    const { esg_score } = req.body;
+
+    if (
+      esg_score === undefined ||
+      esg_score === null
+    ) {
+      return res.status(400).json({
+        message: "Thiếu điểm ESG",
+      });
+    }
+
+    const project = await Project.findByIdAndUpdate(
+      req.params.id,
+      {
+        esg_score: Number(esg_score),
+      },
+      { new: true }
+    );
+
+    if (!project) {
+      return res.status(404).json({
+        message: "Không tìm thấy dự án",
+      });
+    }
+
+    res.json({
+      message: "Cập nhật ESG thành công",
+      project,
+    });
+  } catch (error) {
+    console.error("UPDATE ESG ERROR:", error);
+
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
 router.put("/projects/:id/status", async (req, res) => {
   try {
     const oldProject = await Project.findById(req.params.id);
